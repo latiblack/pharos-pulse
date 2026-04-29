@@ -3,343 +3,434 @@
 import Link from "next/link";
 import {
   TrendingUp,
-  Users,
+  TrendingDown,
   Activity,
   Wallet,
   Zap,
-  ArrowUp,
-  ArrowDown,
-  Flame,
+  ArrowUpRight,
+  ArrowDownRight,
   ChevronRight,
-  Radio,
-  Circle,
-  Clock,
-  DollarSign,
-  Blocks,
-  BarChart3,
   Search,
   Bell,
-  Filter,
-  TrendingDown
+  Settings,
+  Users,
+  Blocks,
+  DollarSign,
+  Flame,
+  Layers,
+  Globe,
+  MoreHorizontal
 } from "lucide-react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell
+} from "recharts";
 
-const stats = [
-  { label: "Total Value Locked", value: "$187.5M", change: "+12.4%", positive: true, icon: DollarSign },
-  { label: "24h Trading Volume", value: "$892.4M", change: "+8.2%", positive: true, icon: Activity },
-  { label: "Active Wallets", value: "143,892", change: "+5.7%", positive: true, icon: Wallet },
-  { label: "Smart Contracts", value: "1,247", change: "+23", positive: true, icon: Blocks },
+const portfolioData = [
+  { month: "Jan", value: 125000 },
+  { month: "Feb", value: 145000 },
+  { month: "Mar", value: 138000 },
+  { month: "Apr", value: 172000 },
+  { month: "May", value: 195000 },
+  { month: "Jun", value: 218000 },
 ];
 
-const chartData = [
-  { day: "Mon", value: 4200 },
-  { day: "Tue", value: 5800 },
-  { day: "Wed", value: 4500 },
-  { day: "Thu", value: 7200 },
-  { day: "Fri", value: 8900 },
-  { day: "Sat", value: 10200 },
-  { day: "Sun", value: 9500 },
+const volumeData = [
+  { day: "Mon", volume: 4200000, txs: 12400 },
+  { day: "Tue", volume: 5800000, txs: 18200 },
+  { day: "Wed", volume: 4500000, txs: 14500 },
+  { day: "Thu", volume: 7200000, txs: 22100 },
+  { day: "Fri", volume: 8900000, txs: 28400 },
+  { day: "Sat", volume: 10200000, txs: 32600 },
+  { day: "Sun", volume: 9500000, txs: 29800 },
 ];
 
-const topApps = [
-  { id: 1, name: "PharosSwap", category: "DeFi", tvl: "$89.2M", volume: "$45.7M", users: "28.5K", trend: 12.5, color: "#3b82f6" },
-  { id: 2, name: "ChainQuest", category: "Gaming", tvl: "$34.1M", volume: "$12.3M", users: "45.7K", trend: 28.3, color: "#8b5cf6" },
-  { id: 3, name: "NFTVerse", category: "NFT", tvl: "$23.8M", volume: "$23.5M", users: "18.2K", trend: 8.7, color: "#10b981" },
-  { id: 4, name: "StakeVault", category: "DeFi", tvl: "$56.2M", volume: "$34.6M", users: "12.3K", trend: 5.2, color: "#f59e0b" },
-  { id: 5, name: "BridgeX", category: "Infrastructure", tvl: "$78.5M", volume: "$67.2M", users: "22.1K", trend: 15.8, color: "#06b6d4" },
+const categoryData = [
+  { name: "DeFi", value: 35, color: "#3b82f6" },
+  { name: "Gaming", value: 25, color: "#8b5cf6" },
+  { name: "NFTs", value: 18, color: "#f59e0b" },
+  { name: "Social", value: 12, color: "#10b981" },
+  { name: "Infra", value: 10, color: "#06b6d4" },
 ];
 
-const liveActivity = [
-  { type: "Swap", from: "0x7B2d...8C4a", to: "PharosSwap", amount: "45,230 PHA → 2,340 USDC", time: "2s ago", typeColor: "#3b82f6" },
-  { type: "Stake", from: "0x9F1a...2B3c", to: "StakeVault", amount: "+5,000 PHA", time: "8s ago", typeColor: "#10b981" },
-  { type: "Mint", from: "0x4D5e...6F7a", to: "NFTVerse", amount: "NFT #2847", time: "15s ago", typeColor: "#8b5cf6" },
-  { type: "Bridge", from: "0x1A2b...3C4d", to: "BridgeX", amount: "10,000 USDC", time: "22s ago", typeColor: "#06b6d4" },
-  { type: "Swap", from: "0x8G9h...0I1j", to: "PharosSwap", amount: "1,200 USDC → 890 PHA", time: "31s ago", typeColor: "#3b82f6" },
+const topProtocols = [
+  { rank: 1, name: "PharosSwap", category: "DEX", tvl: "$89.2M", change: 5.2, volume: "$45.7M", color: "#3b82f6" },
+  { rank: 2, name: "LendFlow", category: "Lending", tvl: "$67.4M", change: 12.8, volume: "$23.1M", color: "#8b5cf6" },
+  { rank: 3, name: "ChainQuest", category: "Gaming", tvl: "$45.8M", change: -2.1, volume: "$18.9M", color: "#f59e0b" },
+  { rank: 4, name: "StakeVault", category: "Staking", tvl: "$34.2M", change: 8.4, volume: "$12.4M", color: "#10b981" },
+  { rank: 5, name: "BridgeX", category: "Bridge", tvl: "$28.9M", change: 15.2, volume: "$67.2M", color: "#06b6d4" },
 ];
 
-const categories = [
-  { name: "DeFi", apps: 234, color: "#3b82f6" },
-  { name: "Gaming", apps: 156, color: "#8b5cf6" },
-  { name: "NFTs", apps: 89, color: "#f59e0b" },
-  { name: "Social", apps: 67, color: "#10b981" },
-  { name: "Infrastructure", apps: 45, color: "#06b6d4" },
+const recentTransactions = [
+  { type: "swap", from: "0x7a3f...2d8c", to: "PharosSwap", amount: "12,450 USDC → 8,230 PHA", time: "2s ago", status: "completed" },
+  { type: "stake", from: "0x9e2b...4a1f", to: "LendFlow", amount: "+50,000 PHA", time: "15s ago", status: "completed" },
+  { type: "bridge", from: "0x3c8d...7b2e", to: "BridgeX", amount: "5,000 USDC", time: "32s ago", status: "completed" },
+  { type: "mint", from: "0x1f4a...9c3d", to: "NFTVerse", amount: "Lucky Cat #284", time: "48s ago", status: "completed" },
+  { type: "swap", from: "0x6b2c...8e1a", to: "PharosSwap", amount: "2,100 PHA → 3,450 USDC", time: "1m ago", status: "completed" },
 ];
 
-function MiniChart({ data, color }: { data: { day: string; value: number }[]; color: string }) {
-  const max = Math.max(...data.map(d => d.value));
-  const min = Math.min(...data.map(d => d.value));
-  const range = max - min || 1;
-
-  return (
-    <div className="flex items-end gap-[3px] h-10">
-      {data.map((d, i) => (
-        <div
-          key={i}
-          className="flex-1 rounded-sm"
-          style={{
-            height: `${((d.value - min) / range) * 100}%`,
-            minHeight: "4px",
-            background: `linear-gradient(180deg, ${color} 0%, ${color}60 100%)`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+const ecosystemStats = [
+  { label: "Total Value Locked", value: "$487.2M", change: "+12.4%", positive: true },
+  { label: "24h Trading Volume", value: "$89.2M", change: "+8.7%", positive: true },
+  { label: "Active Addresses", value: "143,892", change: "+5.2%", positive: true },
+  { label: "Avg. Block Time", value: "1.2s", change: "-0.3s", positive: true },
+  { label: "Total Transactions", value: "24.8M", change: "+2.4M", positive: true },
+  { label: "Gas Price", value: "0.002 Gwei", change: "-15%", positive: true },
+];
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen text-white bg-mesh bg-grid">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#020205]/80 backdrop-blur-xl border-b border-[#1a1a26]">
-        <div className="flex items-center justify-between h-16 px-8">
-          <div>
-            <h1 className="text-xl font-semibold">Overview</h1>
-            <p className="text-[12px] text-[#71717a]">Welcome back! Here&apos;s what&apos;s happening on Pharos.</p>
+    <div className="min-h-screen text-white">
+      {/* Top Navigation */}
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#0a0a0f]/90 border-b border-[#1a1a28]">
+        <div className="flex items-center justify-between h-16 px-6">
+          <div className="flex items-center gap-8">
+            <h1 className="text-lg font-semibold text-white">Dashboard</h1>
+            <nav className="hidden md:flex items-center gap-1">
+              {["Overview", "Portfolio", "Analytics", "Markets"].map((item, i) => (
+                <button
+                  key={item}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    i === 0 ? "bg-[#1a1a28] text-white" : "text-[#71717a] hover:text-white hover:bg-[#1a1a28]/50"
+                  }`}
+                >
+                  {item}
+                </button>
+              ))}
+            </nav>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Search */}
-            <div className="relative">
+          <div className="flex items-center gap-3">
+            <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#52525b]" />
               <input
                 type="text"
-                placeholder="Search apps, transactions..."
-                className="input-field w-64 pl-10 py-2 text-sm"
+                placeholder="Search..."
+                className="w-48 h-9 pl-9 pr-4 text-sm bg-[#14141f] border border-[#1a1a28] rounded-lg focus:outline-none focus:border-[#3b82f6] text-white placeholder-[#52525b]"
               />
             </div>
-
-            {/* Notifications */}
-            <button className="relative p-2.5 rounded-xl bg-[#0c0c14] border border-[#1a1a26] hover:border-[#242432] transition-colors">
+            <button className="relative w-9 h-9 flex items-center justify-center bg-[#14141f] border border-[#1a1a28] rounded-lg hover:border-[#3b82f6]/50 transition-colors">
               <Bell className="w-4 h-4 text-[#71717a]" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#3b82f6] rounded-full" />
             </button>
-
-            {/* Profile */}
-            <div className="flex items-center gap-3 pl-4 border-l border-[#1a1a26]">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] flex items-center justify-center text-sm font-semibold">
-                JD
-              </div>
+            <button className="w-9 h-9 flex items-center justify-center bg-[#14141f] border border-[#1a1a28] rounded-lg hover:border-[#3b82f6]/50 transition-colors">
+              <Settings className="w-4 h-4 text-[#71717a]" />
+            </button>
+            <div className="w-9 h-9 ml-2 rounded-lg bg-gradient-to-br from-[#3b82f6] to-[#8b5cf6] flex items-center justify-center text-sm font-semibold">
+              JD
             </div>
           </div>
         </div>
       </header>
 
-      <main className="p-8 space-y-8">
-        {/* Stats Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {stats.map((stat, i) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={i}
-                className="stat-card animate-fade-in"
-                style={{ animationDelay: `${i * 0.1}s` }}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-11 h-11 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/20 flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-[#3b82f6]" />
-                  </div>
-                  <span className={`text-[12px] font-semibold px-2 py-1 rounded-lg ${stat.positive ? 'bg-[#10b981]/10 text-[#10b981]' : 'bg-[#ef4444]/10 text-[#ef4444]'}`}>
-                    {stat.change}
-                  </span>
+      <main className="p-6 space-y-6">
+        {/* Portfolio Hero */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Portfolio Card */}
+          <div className="lg:col-span-2 bg-gradient-to-br from-[#1a1a28] to-[#14141f] border border-[#1a1a28] rounded-2xl p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#3b82f6]/5 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#8b5cf6]/5 rounded-full blur-3xl" />
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <p className="text-sm text-[#71717a] mb-1">Total Portfolio Value</p>
+                  <h2 className="text-4xl font-bold text-white">$2,847,392.00</h2>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-1">{stat.value}</h3>
-                <p className="text-[13px] text-[#71717a]">{stat.label}</p>
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-[#10b981]/10 rounded-full">
+                  <TrendingUp className="w-4 h-4 text-[#10b981]" />
+                  <span className="text-sm font-semibold text-[#10b981]">+12.5%</span>
+                </div>
               </div>
-            );
-          })}
+
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={portfolioData}>
+                    <defs>
+                      <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.3} />
+                        <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#3b82f6"
+                      strokeWidth={2}
+                      fill="url(#portfolioGradient)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#1a1a28]">
+                <div>
+                  <p className="text-xs text-[#52525b]">24h Change</p>
+                  <p className="text-lg font-semibold text-[#10b981]">+$324,892</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#52525b]">Best Performer</p>
+                  <p className="text-lg font-semibold text-white">PharosSwap</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#52525b]">Yield APY</p>
+                  <p className="text-lg font-semibold text-white">8.4%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="space-y-4">
+            {/* Ecosystem Stats */}
+            <div className="bg-[#14141f] border border-[#1a1a28] rounded-2xl p-5">
+              <h3 className="text-sm font-semibold text-[#71717a] uppercase tracking-wider mb-4">Ecosystem</h3>
+              <div className="space-y-4">
+                {ecosystemStats.slice(0, 3).map((stat, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <span className="text-sm text-[#a1a1aa]">{stat.label}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-white">{stat.value}</span>
+                      <span className={`text-xs ${stat.positive ? "text-[#10b981]" : "text-[#ef4444]"}`}>
+                        {stat.change}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Category Distribution */}
+            <div className="bg-[#14141f] border border-[#1a1a28] rounded-2xl p-5">
+              <h3 className="text-sm font-semibold text-[#71717a] uppercase tracking-wider mb-4">Distribution</h3>
+              <div className="flex items-center gap-4">
+                <div className="w-24 h-24">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={categoryData}
+                        innerRadius={28}
+                        outerRadius={40}
+                        paddingAngle={4}
+                        dataKey="value"
+                      >
+                        {categoryData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex-1 space-y-2">
+                  {categoryData.map((cat, i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cat.color }} />
+                        <span className="text-xs text-[#a1a1aa]">{cat.name}</span>
+                      </div>
+                      <span className="text-xs font-medium text-white">{cat.value}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* Charts Row */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Main Chart */}
-          <div className="lg:col-span-2 card p-6">
+        {/* Volume Chart & Top Protocols */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Volume Chart */}
+          <div className="lg:col-span-2 bg-[#14141f] border border-[#1a1a28] rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg font-semibold">Trading Volume</h3>
-                <p className="text-[12px] text-[#71717a]">Last 7 days</p>
+                <h3 className="text-lg font-semibold text-white">Trading Volume</h3>
+                <p className="text-sm text-[#52525b]">Last 7 days</p>
               </div>
               <div className="flex items-center gap-2">
-                <button className="px-3 py-1.5 text-[12px] font-medium rounded-lg bg-[#3b82f6]/10 text-[#3b82f6]">7D</button>
-                <button className="px-3 py-1.5 text-[12px] font-medium rounded-lg text-[#71717a] hover:bg-[#1a1a26]">30D</button>
-                <button className="px-3 py-1.5 text-[12px] font-medium rounded-lg text-[#71717a] hover:bg-[#1a1a26]">All</button>
+                {["24H", "7D", "30D", "1Y"].map((period) => (
+                  <button
+                    key={period}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                      period === "7D"
+                        ? "bg-[#3b82f6] text-white"
+                        : "text-[#71717a] hover:text-white hover:bg-[#1a1a28]"
+                    }`}
+                  >
+                    {period}
+                  </button>
+                ))}
               </div>
             </div>
-            <div className="flex items-end gap-2 h-48">
-              {chartData.map((d, i) => {
-                const max = Math.max(...chartData.map(x => x.value));
-                const height = (d.value / max) * 100;
-                return (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                    <div
-                      className="w-full rounded-t-xl bg-gradient-to-t from-[#3b82f6] to-[#3b82f6]/50"
-                      style={{ height: `${height}%` }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex justify-between mt-4 text-[11px] text-[#52525b] font-medium">
-              {chartData.map((d, i) => (
-                <span key={i}>{d.day}</span>
-              ))}
+
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={volumeData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1a1a28" vertical={false} />
+                  <XAxis
+                    dataKey="day"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: "#52525b", fontSize: 12 }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: "#52525b", fontSize: 12 }}
+                    tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#1a1a28",
+                      border: "1px solid #1a1a28",
+                      borderRadius: "8px",
+                      color: "#fff",
+                    }}
+                    formatter={(value) => [`$${(Number(value) / 1000000).toFixed(2)}M`, "Volume"]}
+                  />
+                  <Bar dataKey="volume" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Top Gainers */}
-          <div className="card p-6">
+          {/* Top Protocols */}
+          <div className="bg-[#14141f] border border-[#1a1a28] rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg font-semibold">Top Gainers</h3>
-                <p className="text-[12px] text-[#71717a]">Last 24 hours</p>
+                <h3 className="text-lg font-semibold text-white">Top Protocols</h3>
+                <p className="text-sm text-[#52525b]">By TVL</p>
               </div>
-              <TrendingUp className="w-5 h-5 text-[#10b981]" />
-            </div>
-            <div className="space-y-3">
-              {topApps.slice(0, 4).map((app, i) => (
-                <div key={app.id} className="flex items-center gap-3 p-3 rounded-xl bg-[#08080e] border border-[#1a1a26]">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[12px] font-bold" style={{ backgroundColor: `${app.color}20`, color: app.color }}>
-                    {i + 1}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-medium truncate">{app.name}</p>
-                    <p className="text-[11px] text-[#52525b]">{app.category}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[13px] font-semibold text-[#10b981]">+{app.trend}%</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Apps & Activity Row */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Top Apps Table */}
-          <div className="lg:col-span-2 card p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-lg font-semibold">Top Applications</h3>
-                <p className="text-[12px] text-[#71717a]">By TVL</p>
-              </div>
-              <Link href="/explorer" className="text-[13px] text-[#3b82f6] hover:underline flex items-center gap-1">
+              <Link href="/rankings" className="text-sm text-[#3b82f6] hover:underline flex items-center gap-1">
                 View all <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="text-[11px] text-[#52525b] uppercase tracking-wider border-b border-[#1a1a26]">
-                    <th className="text-left pb-4 font-medium">#</th>
-                    <th className="text-left pb-4 font-medium">Application</th>
-                    <th className="text-right pb-4 font-medium">TVL</th>
-                    <th className="text-right pb-4 font-medium">Volume (24h)</th>
-                    <th className="text-right pb-4 font-medium">Users</th>
-                    <th className="text-right pb-4 font-medium">Trend</th>
-                    <th className="text-right pb-4 font-medium"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topApps.map((app, i) => (
-                    <tr key={app.id} className="border-b border-[#1a1a26]/50 last:border-0 hover:bg-[#08080e]/50 transition-colors">
-                      <td className="py-4">
-                        <div className="w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-bold" style={{ backgroundColor: `${app.color}15`, color: app.color }}>
-                          {i + 1}
-                        </div>
-                      </td>
-                      <td className="py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg" style={{ backgroundColor: `${app.color}20` }} />
-                          <div>
-                            <p className="text-[14px] font-medium">{app.name}</p>
-                            <p className="text-[11px] text-[#52525b]">{app.category}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-4 text-right text-[14px] font-medium">{app.tvl}</td>
-                      <td className="py-4 text-right text-[14px] text-[#a1a1aa]">{app.volume}</td>
-                      <td className="py-4 text-right text-[14px] text-[#a1a1aa]">{app.users}</td>
-                      <td className="py-4 text-right">
-                        <span className="inline-flex items-center gap-1 text-[13px] text-[#10b981]">
-                          <ArrowUp className="w-3 h-3" />
-                          {app.trend}%
-                        </span>
-                      </td>
-                      <td className="py-4 text-right">
-                        <MiniChart data={chartData} color={app.color} />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-3">
+              {topProtocols.map((protocol) => (
+                <div
+                  key={protocol.rank}
+                  className="flex items-center gap-3 p-3 rounded-xl bg-[#0a0a0f] border border-[#1a1a28] hover:border-[#3b82f6]/30 transition-colors cursor-pointer"
+                >
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold"
+                    style={{ backgroundColor: `${protocol.color}15`, color: protocol.color }}
+                  >
+                    {protocol.rank}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-white truncate">{protocol.name}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#1a1a28] text-[#52525b]">
+                        {protocol.category}
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#52525b]">Vol: {protocol.volume}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-white">{protocol.tvl}</p>
+                    <p className={`text-xs ${protocol.change >= 0 ? "text-[#10b981]" : "text-[#ef4444]"}`}>
+                      {protocol.change >= 0 ? "+" : ""}{protocol.change}%
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+        </section>
 
-          {/* Live Activity */}
-          <div className="card p-6">
+        {/* Transactions & Activity */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Recent Transactions */}
+          <div className="bg-[#14141f] border border-[#1a1a28] rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <div className="relative">
                   <div className="w-2 h-2 rounded-full bg-[#10b981]" />
                   <div className="absolute inset-0 w-2 h-2 rounded-full bg-[#10b981] animate-ping opacity-75" />
                 </div>
-                <h3 className="text-lg font-semibold">Live Activity</h3>
+                <h3 className="text-lg font-semibold text-white">Recent Transactions</h3>
               </div>
-              <Link href="/live" className="text-[12px] text-[#3b82f6] hover:underline">View all</Link>
+              <Link href="/live" className="text-sm text-[#3b82f6] hover:underline">
+                View all
+              </Link>
             </div>
 
             <div className="space-y-2">
-              {liveActivity.map((activity, i) => (
+              {recentTransactions.map((tx, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 p-3 rounded-xl bg-[#08080e] border border-[#1a1a26] hover:border-[#242432] transition-colors"
+                  className="flex items-center gap-4 p-3 rounded-xl bg-[#0a0a0f] border border-[#1a1a28] hover:border-[#3b82f6]/20 transition-colors"
                 >
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: activity.typeColor }} />
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    tx.type === "swap" ? "bg-[#3b82f6]/10" :
+                    tx.type === "stake" ? "bg-[#10b981]/10" :
+                    tx.type === "bridge" ? "bg-[#06b6d4]/10" :
+                    "bg-[#8b5cf6]/10"
+                  }`}>
+                    {tx.type === "swap" && <ArrowUpRight className="w-4 h-4 text-[#3b82f6]" />}
+                    {tx.type === "stake" && <TrendingUp className="w-4 h-4 text-[#10b981]" />}
+                    {tx.type === "bridge" && <Globe className="w-4 h-4 text-[#06b6d4]" />}
+                    {tx.type === "mint" && <Layers className="w-4 h-4 text-[#8b5cf6]" />}
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-[13px] font-medium">{activity.type}</span>
-                      <span className="text-[11px] text-[#52525b] truncate">{activity.from}</span>
+                      <span className="text-sm font-medium text-white capitalize">{tx.type}</span>
+                      <span className="text-xs text-[#52525b]">{tx.from}</span>
                     </div>
-                    <p className="text-[11px] text-[#71717a]">{activity.to}</p>
+                    <p className="text-xs text-[#71717a]">{tx.to}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[12px] font-medium truncate max-w-[100px]">{activity.amount}</p>
-                    <p className="text-[10px] text-[#52525b]">{activity.time}</p>
+                    <p className="text-xs font-medium text-white truncate max-w-[120px]">{tx.amount}</p>
+                    <p className="text-[10px] text-[#52525b]">{tx.time}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        </section>
 
-        {/* Categories */}
-        <section className="card p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-semibold">Categories</h3>
-              <p className="text-[12px] text-[#71717a]">Apps by category</p>
-            </div>
-            <button className="btn-secondary text-sm py-2 px-4 flex items-center gap-2">
-              <Filter className="w-4 h-4" />
-              Filter
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {categories.map((cat, i) => (
-              <div
-                key={cat.name}
-                className="p-4 rounded-2xl bg-[#08080e] border border-[#1a1a26] hover:border-[#242432] transition-all hover:transform hover:-translate-y-1 cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-xl mb-3 flex items-center justify-center" style={{ backgroundColor: `${cat.color}15` }}>
-                  <BarChart3 className="w-5 h-5" style={{ color: cat.color }} />
-                </div>
-                <h4 className="text-[15px] font-semibold mb-1 group-hover:text-[#3b82f6] transition-colors">{cat.name}</h4>
-                <p className="text-[13px] text-[#71717a]">{cat.apps} apps</p>
+          {/* Market Stats */}
+          <div className="bg-[#14141f] border border-[#1a1a28] rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-semibold text-white">Market Overview</h3>
+                <p className="text-sm text-[#52525b]">Key metrics</p>
               </div>
-            ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { label: "Total Value Locked", value: "$487.2M", change: "+12.4%", icon: DollarSign, color: "#3b82f6" },
+                { label: "24h Volume", value: "$89.2M", change: "+8.7%", icon: Activity, color: "#8b5cf6" },
+                { label: "Active Wallets", value: "143.9K", change: "+5.2%", icon: Users, color: "#10b981" },
+                { label: "Smart Contracts", value: "1,247", change: "+23", icon: Blocks, color: "#f59e0b" },
+                { label: "Gas Price", value: "0.002 Gwei", change: "-15%", icon: Zap, color: "#06b6d4" },
+                { label: "Categories", value: "8", change: "0", icon: Layers, color: "#ec4899" },
+              ].map((stat, i) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={i} className="p-4 rounded-xl bg-[#0a0a0f] border border-[#1a1a28]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Icon className="w-4 h-4" style={{ color: stat.color }} />
+                      <span className="text-xs text-[#71717a]">{stat.label}</span>
+                    </div>
+                    <p className="text-lg font-bold text-white">{stat.value}</p>
+                    <p className={`text-xs ${stat.change.startsWith("+") || stat.change.startsWith("-") && !stat.change.startsWith("-15") ? "text-[#10b981]" : "text-[#71717a]"}`}>
+                      {stat.change}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </section>
       </main>
