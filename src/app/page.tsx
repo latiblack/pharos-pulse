@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, ArrowDownRight, TrendingUp, Users, Activity, Wallet, Code, Zap, ExternalLink } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
-import { MOCK_STATS, MOCK_APPS, generateTransactionChartData, generateWalletGrowthData, formatNumber, formatCurrency, timeAgo, CATEGORIES } from "@/lib/mockData";
+import { MOCK_STATS, MOCK_APPS, MOCK_TRANSACTIONS, generateTransactionChartData, generateWalletGrowthData, formatNumber, formatCurrency, timeAgo, CATEGORIES } from "@/lib/mockData";
 
 const transactionData = generateTransactionChartData();
 const walletData = generateWalletGrowthData();
