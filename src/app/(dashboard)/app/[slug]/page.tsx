@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Twitter, Globe, Copy, Check, TrendingUp, Users, Activity, Wallet, Flame, ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowLeft, ExternalLink, Globe, Copy, Check, TrendingUp, Users, Activity, Wallet, Flame, ArrowUp, ArrowDown } from "lucide-react";
 import { useState } from "react";
 
 const appData: Record<string, any> = {
@@ -168,8 +168,8 @@ export default function AppDetailPage() {
                 <ExternalLink className="w-3 h-3 text-gray-500 ml-auto" />
               </a>
               <a href="#" className="flex items-center gap-3 p-3 rounded-lg bg-[#1a1a24] hover:bg-[#1a1a24]/50 transition-colors">
-                <Twitter className="w-4 h-4 text-gray-400" />
-                <span>Twitter</span>
+<Globe className="w-4 h-4 text-gray-400" />
+<span>X (Twitter)</span>
                 <ExternalLink className="w-3 h-3 text-gray-500 ml-auto" />
               </a>
             </div>
