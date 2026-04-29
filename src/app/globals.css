@@ -1,15 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --pharos-bg: #0a0a0f;
-  --pharos-card: #12121a;
-  --pharos-border: #1e1e2e;
-  --pharos-electric: #00d4ff;
-  --pharos-neon: #a855f7;
+  --bg-primary: #06060a;
+  --bg-secondary: #0d0d14;
+  --border: #1a1a24;
+  --electric: #00d4ff;
+  --neon: #a855f7;
 }
 
 * {
@@ -18,24 +18,33 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--pharos-bg);
+  background: var(--bg-primary);
   color: white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Glassmorphism cards */
-.glass-card {
-  background: rgba(18, 18, 26, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(30, 30, 46, 0.8);
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.glass-card:hover {
-  border-color: rgba(0, 212, 255, 0.3);
-  box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--electric);
 }
 
 /* Glow effects */
@@ -47,43 +56,17 @@ body {
   box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0a0a0f;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #1e1e2e;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #00d4ff;
-}
-
 /* Animations */
-@keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.6); }
 }
 
-.animate-ticker {
-  animation: ticker 30s linear infinite;
+@keyframes slide-up {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Terminal style */
-.terminal-text {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.terminal-line::before {
-  content: ">";
-  color: #00d4ff;
-  margin-right: 8px;
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
 }

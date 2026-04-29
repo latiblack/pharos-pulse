@@ -1,202 +1,112 @@
 "use client";
 
-import { TrendingUp, TrendingDown, Users, Zap, Activity, PieChart, ArrowUpRight, Flame } from "lucide-react";
-import { MOCK_APPS, MOCK_STATS, formatNumber, formatCurrency, generateTransactionChartData } from "@/lib/mockData";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
-
-const txData = generateTransactionChartData(14);
+import Link from "next/link";
+import { PieChart, TrendingUp, Flame, Activity, Zap, Users } from "lucide-react";
 
 export default function InsightsPage() {
-  // Calculate insights from data
-  const categoryStats = MOCK_APPS.reduce((acc, app) => {
-    acc[app.category] = (acc[app.category] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const insights = [
+    { title: "Hot Sector", value: "AI & Gaming", desc: "AIOracle + ChainQuest driving 73% of new user growth", icon: Zap, color: "#00d4ff" },
+    { title: "Top Gainer", value: "AIOracle", desc: "+45.2% growth this week", icon: Flame, color: "#22c55e" },
+    { title: "Volume Leader", value: "BridgeX", desc: "$156.8M in 24h", icon: Activity, color: "#a855f7" },
+  ];
 
-  const topGainer = [...MOCK_APPS].sort((a, b) => b.trend_percent - a.trend_percent)[0];
-  const topVolume = [...MOCK_APPS].sort((a, b) => b.volume_24h - a.volume_24h)[0];
-  const totalUsers = MOCK_APPS.reduce((sum, app) => sum + app.users_today, 0);
-
-  const categoryData = Object.entries(categoryStats).map(([name, value]) => ({
-    name,
-    value,
-    fill: categoryColors[name] || "#8888aa",
-  }));
-
-  const weeklyData = txData.slice(-7).map(d => ({
-    day: new Date(d.timestamp).toLocaleDateString("en-US", { weekday: "short" }),
-    tx: d.value,
-  }));
+  const narratives = [
+    { title: "DeFi Summer Returns", desc: "Total volume up 45% as yield opportunities attract institutional capital", metrics: ["TVL +$50M", "Volume +45%"] },
+    { title: "Gaming Surge", desc: "Play-to-earn activity spikes with new seasonal rewards programs", metrics: ["DAU +28%", "Session +35%"] },
+    { title: "Infrastructure Growth", desc: "Cross-chain bridges seeing record usage", metrics: ["Bridge +67%", "New chains +5"] },
+    { title: "SocialFi Momentum", desc: "Decentralized social platforms gaining traction", metrics: ["Users +15%", "Content +89%"] },
+  ];
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-            <PieChart className="w-8 h-8 text-pharos-neon" />
-            Insights
-          </h1>
-          <p className="text-pharos-muted">Auto-generated ecosystem intelligence</p>
+    <div className="min-h-screen bg-[#06060a] text-white">
+      <header className="border-b border-[#1a1a24] bg-[#06060a]/80 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#00d4ff] to-[#a855f7] flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <span className="text-lg font-bold tracking-tight">
+              PHAROS<span className="text-[#00d4ff]">PULSE</span>
+            </span>
+          </Link>
+          <nav className="hidden md:flex items-center gap-1">
+            {["Dashboard", "Explorer", "Rankings", "Live", "Insights"].map((item, i) => (
+              <Link
+                key={item}
+                href={i === 0 ? "/" : `/${item.toLowerCase()}`}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  i === 4 ? "text-[#00d4ff] bg-[#00d4ff]/10" : "text-gray-400 hover:text-white hover:bg-[#1a1a24]"
+                }`}
+              >
+                {item}
+              </Link>
+            ))}
+          </nav>
         </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
+          <PieChart className="w-8 h-8 text-[#a855f7]" />
+          Insights
+        </h1>
+        <p className="text-gray-400 mb-8">Auto-generated ecosystem intelligence</p>
 
         {/* Key Insights */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <InsightCard
-            title="Hot Sector"
-            value="AI & Gaming"
-            description="AIOracle + ChainQuest driving 73% of new user growth"
-            icon={Zap}
-            color="text-pharos-electric"
-          />
-          <InsightCard
-            title="Top Gainer"
-            value={topGainer.name}
-            description={`+${topGainer.trend_percent}% growth this week`}
-            icon={Flame}
-            color="text-pharos-success"
-            action={`${formatNumber(topGainer.users_today)} daily users`}
-          />
-          <InsightCard
-            title="Volume Leader"
-            value={topVolume.name}
-            description={`${formatCurrency(topVolume.volume_24h)} in 24h`}
-            icon={Activity}
-            color="text-pharos-neon"
-          />
+        <div className="grid md:grid-cols-3 gap-4 mb-8">
+          {insights.map((insight, i) => {
+            const Icon = insight.icon;
+            return (
+              <div key={i} className="rounded-2xl bg-[#0d0d14] border border-[#1a1a24] p-6 hover:border-[#00d4ff]/30 transition-colors">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm text-gray-500">{insight.title}</span>
+                  <Icon className="w-5 h-5" style={{ color: insight.color }} />
+                </div>
+                <div className="text-xl font-bold mb-1" style={{ color: insight.color }}>{insight.value}</div>
+                <p className="text-sm text-gray-500">{insight.desc}</p>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Charts Row */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          {/* Weekly Activity */}
-          <div className="glass-card rounded-2xl p-6">
-            <h2 className="text-lg font-semibold mb-4">Weekly Activity</h2>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={weeklyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e1e2e" />
-                  <XAxis dataKey="day" tick={{ fill: "#8888aa", fontSize: 12 }} />
-                  <YAxis tick={{ fill: "#8888aa", fontSize: 12 }} tickFormatter={(v) => formatNumber(v)} />
-                  <Tooltip contentStyle={{ background: "#12121a", border: "1px solid #1e1e2e", borderRadius: "8px" }} />
-                  <Bar dataKey="tx" fill="#00d4ff" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+        {/* Narratives */}
+        <h2 className="text-lg font-semibold mb-4">Trending Narratives</h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          {narratives.map((n, i) => (
+            <div key={i} className="rounded-xl bg-[#0d0d14] border border-[#1a1a24] p-5">
+              <div className="flex items-start justify-between mb-2">
+                <h3 className="font-semibold">{n.title}</h3>
+                <TrendingUp className="w-4 h-4 text-[#22c55e]" />
+              </div>
+              <p className="text-sm text-gray-500 mb-3">{n.desc}</p>
+              <div className="flex flex-wrap gap-2">
+                {n.metrics.map((m, j) => (
+                  <span key={j} className="px-2 py-1 text-xs rounded-md bg-[#1a1a24] text-[#00d4ff]">
+                    {m}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          ))}
+        </div>
 
-          {/* Category Distribution */}
-          <div className="glass-card rounded-2xl p-6">
-            <h2 className="text-lg font-semibold mb-4">Category Distribution</h2>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={categoryData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e1e2e" />
-                  <XAxis type="number" tick={{ fill: "#8888aa", fontSize: 12 }} />
-                  <YAxis dataKey="name" type="category" tick={{ fill: "#8888aa", fontSize: 12 }} width={80} />
-                  <Tooltip contentStyle={{ background: "#12121a", border: "1px solid #1e1e2e", borderRadius: "8px" }} />
-                  <Bar dataKey="value" radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8">
+          {[
+            { label: "Total Users", value: "213.5K" },
+            { label: "Avg Session", value: "12.4m" },
+            { label: "7-Day Retention", value: "34.2%" },
+            { label: "30-Day Retention", value: "18.7%" },
+          ].map((stat, i) => (
+            <div key={i} className="rounded-xl bg-[#0d0d14] border border-[#1a1a24] p-4 text-center">
+              <div className="text-xl font-bold text-[#00d4ff]">{stat.value}</div>
+              <div className="text-xs text-gray-500 mt-1">{stat.label}</div>
             </div>
-          </div>
-        </div>
-
-        {/* Trends Section */}
-        <div className="glass-card rounded-2xl p-6">
-          <h2 className="text-lg font-semibold mb-6">Trending Narratives</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <NarrativeCard
-              title="DeFi Summer Returns"
-              description="Total volume up 45% as yield opportunities attract institutional capital"
-              trend="up"
-              metrics={["TVL +$50M", "Volume +45%", "New protocols +8"]}
-            />
-            <NarrativeCard
-              title="Gaming Surge"
-              description="Play-to-earn activity spikes with new seasonal rewards programs"
-              trend="up"
-              metrics={["DAU +28%", "Session time +35%", "NFT volume +52%"]}
-            />
-            <NarrativeCard
-              title="Infrastructure Growth"
-              description="Cross-chain bridges seeing record usage as multi-chain activity increases"
-              trend="up"
-              metrics={["Bridge volume +67%", "New chains +5", "TVL +$23M"]}
-            />
-            <NarrativeCard
-              title="SocialFi Momentum"
-              description="Decentralized social platforms gaining traction with creator economy tools"
-              trend="up"
-              metrics={["Users +15%", "Content +89%", "Engagement +42%"]}
-            />
-          </div>
-        </div>
-
-        {/* Retention Stats */}
-        <div className="grid md:grid-cols-4 gap-4 mt-8">
-          <StatCard label="Total Ecosystem Users" value={formatNumber(totalUsers)} />
-          <StatCard label="Avg Session Duration" value="12.4m" />
-          <StatCard label="7-Day Retention" value="34.2%" />
-          <StatCard label="30-Day Retention" value="18.7%" />
+          ))}
         </div>
       </div>
-    </div>
-  );
-}
-
-const categoryColors: Record<string, string> = {
-  DeFi: "#00d4ff",
-  Gaming: "#a855f7",
-  NFT: "#22c55e",
-  Infrastructure: "#f59e0b",
-  Social: "#ec4899",
-  Payments: "#06b6d4",
-  RWA: "#14b8a6",
-  AI: "#8b5cf6",
-};
-
-function InsightCard({ title, value, description, icon: Icon, color, action }: any) {
-  return (
-    <div className="glass-card rounded-2xl p-6">
-      <div className="flex items-start justify-between mb-3">
-        <span className="text-sm text-pharos-muted">{title}</span>
-        <Icon className={`w-5 h-5 ${color}`} />
-      </div>
-      <div className={`text-2xl font-bold mb-1 ${color}`}>{value}</div>
-      <p className="text-sm text-pharos-muted mb-2">{description}</p>
-      {action && <span className="text-xs text-pharos-muted bg-pharos-card px-2 py-1 rounded">{action}</span>}
-    </div>
-  );
-}
-
-function NarrativeCard({ title, description, trend, metrics }: { title: string; description: string; trend: string; metrics: string[] }) {
-  return (
-    <div className="p-4 rounded-xl bg-pharos-card/50 border border-pharos-border">
-      <div className="flex items-start justify-between mb-2">
-        <h3 className="font-semibold">{title}</h3>
-        {trend === "up" ? (
-          <TrendingUp className="w-4 h-4 text-pharos-success" />
-        ) : (
-          <TrendingDown className="w-4 h-4 text-pharos-danger" />
-        )}
-      </div>
-      <p className="text-sm text-pharos-muted mb-3">{description}</p>
-      <div className="flex flex-wrap gap-2">
-        {metrics.map((m, i) => (
-          <span key={i} className="text-xs px-2 py-1 rounded bg-pharos-bg text-pharos-electric">
-            {m}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="glass-card rounded-xl p-4 text-center">
-      <div className="text-xl font-bold text-pharos-electric">{value}</div>
-      <div className="text-xs text-pharos-muted">{label}</div>
     </div>
   );
 }
